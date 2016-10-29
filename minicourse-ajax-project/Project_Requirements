@@ -1,0 +1,15 @@
+develop a single-page application featuring a map of your neighborhood or a neighborhood you would like to visit. You will then add functionality to this map including highlighted locations, third-party data about those locations and various ways to browse the content.
+
+- Add additional functionality to this application, including: map markers to identify popular locations or places you’d like to visit
+- a search function to easily discover these locations, and a listview to support simple browsing of all locations
+- research and implement third-party APIs that provide additional information about each of these locations (such as StreetView images, Wikipedia articles, Yelp reviews, etc).
+
+
+Step 1:
+Add a neighbourhood, lets say kitsilano
+Let's enter kitsilano and find a map - For this what we need to do is find the coordinates for kitsilano and pass it up
+
+so lets say we want to add vancouver.
+what are the 5 top spots in vancouver?
+
+if we know the lat long of an object, we can use the places service to look up the most popular places around that area

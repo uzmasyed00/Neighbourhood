@@ -14,18 +14,9 @@
 
     <hr>
 
-    <h2 id="greeting" class="greeting">Where do you want to visit?</h2>
-
-
-    <div class="wikipedia-container">
-        <h3 id="wikipedia-header">Relevant Wikipedia Links</h3>
-        <ul id="wikipedia-links">Type in an address above and find relevant Wikipedia articles here!</ul>
-    </div>
-
-
-    <div class="nytimes-container">
-        <h3 id="nytimes-header">New York Times Articles</h3>
-        <ul id="nytimes-articles" class="article-list">What's going on in your new city? Enter an address and hit submit and the NY Times will tell you here!</ul>
+    <div id="floating-panel">
+      <label for="address">Address: </label><input id="address" type="textbox">
+      <input id="submit" type="button" value="Geocode">
     </div>
 
     <div id = "map">
@@ -33,27 +24,62 @@
     </div>
 
      <script>
-     // TODO: Create a map variable
      var map;
-     // TODO: Complete the following function to initialize the map
      function initMap() {
-       // TODO: use a constructor to create a new map JS object. You can use the coordinates
-       // we used, 40.7413549, -73.99802439999996 or your own!
-         var nyc = {lat:40.7413549, lng:-73.99802439999996}
-         map = new google.maps.Map(document.getElementById('map'), {
-             center:{lat:40.7413549, lng:-73.99802439999996},
-                 zoom:13
-         });
-
+         var pyrmont = new google.maps.LatLng(40.7413549,-73.99802439999996);
+          map = new google.maps.Map(document.getElementById('map'), {
+             center: pyrmont,
+             zoom: 8
+         // center: {lat: -34.397, lng: 150.644}
+        });
          var marker = new google.maps.Marker({
-          position: nyc ,
+          position: pyrmont ,
           map: map
         });
 
+         var request = {
+            location: pyrmont,
+            radius: '500'
+           // types: ['store']
+        };
+         var service;
+         service = new google.maps.places.PlacesService(map);
+         service.nearbySearch(request, callback);
+
+         var geocoder = new google.maps.Geocoder();
+         document.getElementById('submit').addEventListener('click', function() {
+             geocodeAddress(geocoder, map);
+            });
+
      }
+
+     function callback(results, status) {
+     if (status == google.maps.places.PlacesServiceStatus.OK) {
+        for (var i = 0; i < results.length; i++) {
+            var place = results[i];
+            createMarker(results[i]);
+            }
+        }
+    }
      function sayHello() {
-      alert("hello")
+      console.log("Hello")
      }
+
+     function geocodeAddress(geocoder, resultsMap) {
+        var address = document.getElementById('address').value;
+         console.log("address is" + address);
+        geocoder.geocode({'address': address}, function(results, status) {
+          if (status === 'OK') {
+            resultsMap.setCenter(results[0].geometry.location);
+            var marker = new google.maps.Marker({
+              map: resultsMap,
+              position: results[0].geometry.location
+            });
+          } else {
+            alert('Geocode was not successful for the following reason: ' + status);
+          }
+        });
+      }
 
    </script>
     <script src="js/libs/jquery.min.js"></script>

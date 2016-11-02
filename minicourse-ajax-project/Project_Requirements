@@ -13,3 +13,9 @@ so lets say we want to add vancouver.
 what are the 5 top spots in vancouver?
 
 if we know the lat long of an object, we can use the places service to look up the most popular places around that area
+
+
+
+/////////
+Get the address and click Geocode
+the program should take the address, find the latitude and longtitude for that address and find places for that and place them on the map

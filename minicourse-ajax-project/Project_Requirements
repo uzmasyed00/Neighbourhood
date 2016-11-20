@@ -19,3 +19,15 @@ if we know the lat long of an object, we can use the places service to look up t
 /////////
 Get the address and click Geocode
 the program should take the address, find the latitude and longtitude for that address and find places for that and place them on the map
+
+We now have to provide a list view of all the locations found in the above view.
+
+
+Provide a filter option that uses an input field to filter both the list view and the map markers displayed by default on load. The list view and the markers should update accordingly in real time. Providing a search function through a third-party API is not enough to meet specifications. This filter can be a text input or a dropdown menu.
+
+Things to do:
+
+1. Research list view binding in knockout.js
+2. loop through all the places to visit and bind it to the list view above.
+3. clicking on each list item from 2 should display the marker on the map for that list item.
+4.

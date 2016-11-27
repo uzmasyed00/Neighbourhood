@@ -8,16 +8,9 @@
 <body>
 <script type = 'text/javascript' src="knockout/dist/knockout.js"></script>
 
-    <table>
-        <thead>
-            <tr><th>Place</th></tr>
-        </thead>
-        <tbody data-bind="foreach: placesArray">
-            <tr>
-                <td data-bind="text: name"></td>
-            </tr>
-        </tbody>
-    </table>
+
+The name is <span data-bind="text: personName"></span>
+    <div data-bind="foreach: placesArray"></div>
     <form id="form-container" class="form-container">
         <label for="address">Address: </label><input id="address" type="textbox">
         <input id="submit" type="button" value="Geocode">
@@ -42,6 +35,13 @@
      var map_lat_lng;
      var service;
      var placesArray;
+
+     var myViewModel = {
+         personName: 'Uzma Syed',
+         personAge: 123
+     };
+
+
 
      function initMap() {
          map_lat_lng = new google.maps.LatLng(-34.397, 150.644);
@@ -89,13 +89,20 @@
          var results0 = results[0];
          console.log("Results0 geometry is" + results[0].geometry);
          console.log("Length of Results0 is" + results[0].length);
+         //console.log("Results0 opennow is" + results[0].opening_hours.open_now)
+        /* for (var i=0; i<results[0].get(); i++){
+                children_of_place = results[0][i];
+                console.log("Children_of_place is" + children_of_place);
+            }*/
          placesArray = ko.observableArray(results)
-         console.log("PlacesArray is" + placesArray);
-         for (var i = 0; i < placesArray.length; i++) {
-             console.log("Element of placesArray is" + placesArray[i])
-         }
         for (var i = 0; i < results.length; i++) {
             var place = results[i];
+            /*for (var j=0; j<place.length; j++){
+                children_of_place = place[j];
+                console.log("Children_of_place is" + children_of_place);
+            }*/
+            //var results0 = results[0];
+            //console.log("Results0 location is" + results[0].location);
             console.log("Place is" + place)
             console.log("name of place is" + results[i].name)
             console.log("TypeOf name is" + typeof results[i].name)
@@ -103,6 +110,9 @@
 
             //Now we need to add these places to the list view binding
             //construct an observable array
+
+
+
 
             }
         }
@@ -113,6 +123,15 @@
              map: map,
              position: place.geometry.location
          });
+
+        /*var nytimesUrl = 'https://api.nytimes.com/svc/search/v2/articlesearch.json?q=' + place.name + '&sort=newest&api-key=be67cb723daf42fb9cb7741b72018289'
+         $.getJSON(nytimesUrl, function (data) {
+             console.log("Nytimes URL is" + nytimesUrl)
+             console.log("Data Response Docs is" + data.response.docs)
+             console.log("First article is " + data.response.docs[0].lead_paragraph)
+         });*/
+
+         //https://api.foursquare.com/v2/venues/search?ll=40.7,-74&client_id=2M012SDDV0BMMTKDQSLDPFVSM5CBL141GW42QMFZOEK5A3OQ&client_secret=TGVFIAFCX0IJWHNVL0E15QVOKP1Q22QKQOZYTN2WPBDBSIXB&v=YYYYMMDD
 
          var infowindow = new google.maps.InfoWindow({
              content: place.name
@@ -150,7 +169,10 @@
       }
 
    </script>
+    <script type = 'text/javascript' src="knockout/dist/knockout.js"></script>
+    <script>ko.applyBindings(myViewModel)</script>
     <script>ko.applyBindings({placesArray});</script>
+
     <script src="js/libs/jquery.min.js"></script>
     <script src="js/script.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAMz-JMZ-DxEXfOS8_f1nenbjSSs9Nop_U&v=3&libraries=places&callback=initMap" async defer>

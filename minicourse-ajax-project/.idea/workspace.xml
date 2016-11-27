@@ -25,8 +25,8 @@
       <file leaf-file-name="neighbourhood.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/neighbourhood.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1312">
-              <caret line="153" column="35" selection-start-line="153" selection-start-column="34" selection-end-line="153" selection-end-column="35" />
+            <state relative-caret-position="340">
+              <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -633,17 +633,17 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/neighbourhood.html</url>
-          <line>46</line>
+          <line>47</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/neighbourhood.html</url>
-          <line>50</line>
+          <line>51</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/neighbourhood.html</url>
-          <line>60</line>
+          <line>61</line>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
@@ -1055,8 +1055,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/neighbourhood.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1312">
-          <caret line="153" column="35" selection-start-line="153" selection-start-column="34" selection-end-line="153" selection-end-column="35" />
+        <state relative-caret-position="340">
+          <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
           <folding />
         </state>
       </provider>

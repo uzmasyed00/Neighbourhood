@@ -1,0 +1,33 @@
+develop a single-page application featuring a map of your neighborhood or a neighborhood you would like to visit. You will then add functionality to this map including highlighted locations, third-party data about those locations and various ways to browse the content.
+
+- Add additional functionality to this application, including: map markers to identify popular locations or places you’d like to visit
+- a search function to easily discover these locations, and a listview to support simple browsing of all locations
+- research and implement third-party APIs that provide additional information about each of these locations (such as StreetView images, Wikipedia articles, Yelp reviews, etc).
+
+
+Step 1:
+Add a neighbourhood, lets say kitsilano
+Let's enter kitsilano and find a map - For this what we need to do is find the coordinates for kitsilano and pass it up
+
+so lets say we want to add vancouver.
+what are the 5 top spots in vancouver?
+
+if we know the lat long of an object, we can use the places service to look up the most popular places around that area
+
+
+
+/////////
+Get the address and click Geocode
+the program should take the address, find the latitude and longtitude for that address and find places for that and place them on the map
+
+We now have to provide a list view of all the locations found in the above view.
+
+
+Provide a filter option that uses an input field to filter both the list view and the map markers displayed by default on load. The list view and the markers should update accordingly in real time. Providing a search function through a third-party API is not enough to meet specifications. This filter can be a text input or a dropdown menu.
+
+Things to do:
+
+1. Research list view binding in knockout.js
+2. loop through all the places to visit and bind it to the list view above.
+3. clicking on each list item from 2 should display the marker on the map for that list item.
+4.

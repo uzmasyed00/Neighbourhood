@@ -14,7 +14,7 @@
 
 
     <ul id = "ul" class="collection" data-bind="foreach: placesArray">
-                <li id = "li" class="collection-item" data-bind="text: name"></li>
+                <li id = "li" class="collection-item" data-bind="visible: visible, text: name"></li>
         </ul>
 
 
@@ -78,24 +78,22 @@
         filter = input.value.toUpperCase();
         ul = document.getElementById("ul");
         li = ul.getElementsByTagName('li');
-         
+
         // Loop through all list items, and hide those who don't match the search query
         for (i = 0; i < li.length; i++) {
             console.log("i is" + i);
             console.log("li[i] is" + li[i].innerHTML);
             if (li[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
                 li[i].style.display = "";
-                //addMarker(li[i].innerHTML);
             } else {
                 li[i].style.display = "none";
             }
         }
-
          //now make sure that clicking on the filtered location actually shows only that marker and disables the rest
-         var filteredPlace = geocodeAddress(input.value, geocoder, map, function (error, res) {
+        /* var filteredPlace = geocodeAddress(input.value, geocoder, map, function (error, res) {
                  filteredPlace = res
                  console.log("result of filtered location is" + res)
-             });
+             });*/
 
      }
 

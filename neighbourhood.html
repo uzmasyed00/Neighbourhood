@@ -8,13 +8,10 @@
 <body>
     <script type = 'text/javascript' src="knockout/dist/knockout.js"></script>
 
-<input type="text" id="myInput" placeholder="Search for a particular place..">
-    <input id="filter" type="button" value="Filter" onclick=Filter()>
-
-
+    <input type="text" value="filter" id="filter" onkeypress="filterPlaces()" data-bind="valueUpdate: 'afterkeydown'">
 
     <ul id = "ul" class="collection" data-bind="foreach: placesArray">
-                <li id = "li" class="collection-item" data-bind="visible: visible, text: name"></li>
+                <li id = "li" class="collection-item" data-bind="visible: true, text: name"></li>
         </ul>
 
 
@@ -39,11 +36,18 @@
      var map_lat_lng;
      var service;
      var placesArray;
+     var marker;
+     var returnedPlaces;
+     var markerList = []
 
      var ViewModel = function(){
-         placesArray = ko.observableArray()
+         placesArray = ko.observableArray(),
+                 filteredItems = ko.observableArray()
+               //  selectedChoice = ko.observable()
 
          }
+
+
 
      function initMap() {
          map_lat_lng = new google.maps.LatLng(-34.397, 150.644);
@@ -63,7 +67,6 @@
                      radius: '50000',
                      types: ['food']
                  };
-
                  service = new google.maps.places.PlacesService(map);
                  service.nearbySearch(request, callback)
 
@@ -79,40 +82,78 @@
         ul = document.getElementById("ul");
         li = ul.getElementsByTagName('li');
 
+         var typeli = li.valueOf();
+         console.log("typeli is" + typeof typeli);
+
         // Loop through all list items, and hide those who don't match the search query
         for (i = 0; i < li.length; i++) {
-            console.log("i is" + i);
-            console.log("li[i] is" + li[i].innerHTML);
+
+
             if (li[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
                 li[i].style.display = "";
+                console.log("I have displayed the li[i] element")
+                console.log("li[i].innerHTML is" + li[i].innerHTML)
+
             } else {
                 li[i].style.display = "none";
+                console.log("I am going to set map marker as null")
+                markerList[i].setMap(null);
             }
+
         }
-         //now make sure that clicking on the filtered location actually shows only that marker and disables the rest
-        /* var filteredPlace = geocodeAddress(input.value, geocoder, map, function (error, res) {
-                 filteredPlace = res
-                 console.log("result of filtered location is" + res)
-             });*/
 
      }
+
+     function filterPlaces(){
+         console.log("I am in filteredPlaces")
+           ViewModel.filteredItems = ko.computed(function() {
+    var filter = document.getElementById('filter').value.toUpperCase();
+               console.log("filter is" + filter)
+    if (!filter) {
+        console.log("placesArray in if statement is" + placesArray)
+        return this.placesArray;
+    } else {
+        console.log("I am in else statement")
+        var filteredItems = ko.utils.arrayFilter(placesArray, function(place) {
+            console.log("I am in return function")
+            var filtered_item = ko.utils.stringStartsWith(place.name().toLowerCase(), filter);
+            console.log("filtered_item is" + filtered_item)
+        });
+        console.log("filteredItems is" + filteredItems)
+    }
+}, ViewModel);
+
+     }
+
 
      function callback(results, status) {
      if (status == google.maps.places.PlacesServiceStatus.OK) {
          console.log(results[0])
          placesArray(results);
 
+         returnedPlaces =  results;
+         console.log("returnedPlaces inside the callback is" + returnedPlaces)
+
+
+         //markerList = [];
+         if (markerList.length >0){
+             for (var i=0; i<markerList.length; i++){
+                 markerList[i].setMap(null);
+             }
+         }
+
         for (var i = 0; i < results.length; i++) {
             var place = results[i];
+            console.log("place is" + place);
             addMarker(results[i]);
+            markerList.push(marker);
             }
         }
-
 
     }
 
      function addMarker(place) {
-         var marker = new google.maps.Marker({
+         marker = new google.maps.Marker({
              map: map,
              position: place.geometry.location
          });

@@ -8,7 +8,8 @@
 <body>
     <script type = 'text/javascript' src="knockout/dist/knockout.js"></script>
 
-    <input type="text" id="filter" data-bind="textInput:item_to_be_filtered">
+    <input type="text" id="filter" data-bind="textInput: item_to_be_filtered, event: {keypress: filterPlaces()}">
+<p> You entered : <span data-bind="text: item_to_be_filtered"/></p>
 
     <ul id = "ul" class="collection" data-bind="foreach: placesArray">
                 <li id = "li" class="collection-item" data-bind="visible: true, text: name"></li>
@@ -46,7 +47,8 @@
                  item_to_be_filtered = ko.observable('')
          }
 
-     ViewModel.item_to_be_filtered = "Uzma";
+     //item_to_be_filtered("Uzma");
+
 
 
 
@@ -78,8 +80,8 @@
      }
 
      function filterPlaces(){
-         console.log("I am in filteredPlaces")
-           ViewModel.item_to_be_filtered = ko.computed(function() {
+         console.log("I am in filteredPlaces and value of item-to_be_filtered is" + ViewModel.item_to_be_filtered)
+          /* ViewModel.item_to_be_filtered = ko.computed(function() {
     var filter = document.getElementById('filter').value.toUpperCase();
                console.log("filter is" + filter)
     if (!filter) {
@@ -94,7 +96,7 @@
         });
         console.log("filteredItems is" + filteredItems)
     }
-}, ViewModel);
+}, ViewModel);*/
 
      }
 

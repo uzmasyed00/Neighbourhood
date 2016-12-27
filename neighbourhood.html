@@ -8,7 +8,7 @@
 <body>
     <script type = 'text/javascript' src="knockout/dist/knockout.js"></script>
 
-    <input type="text" value="filter" id="filter" onkeypress="filterPlaces()" data-bind="valueUpdate: 'afterkeydown'">
+    <input type="text" id="filter" data-bind="textInput:item_to_be_filtered">
 
     <ul id = "ul" class="collection" data-bind="foreach: placesArray">
                 <li id = "li" class="collection-item" data-bind="visible: true, text: name"></li>
@@ -36,16 +36,18 @@
      var map_lat_lng;
      var service;
      var placesArray;
+     var item_to_be_filtered;
      var marker;
      var returnedPlaces;
      var markerList = []
 
      var ViewModel = function(){
          placesArray = ko.observableArray(),
-                 filteredItems = ko.observableArray()
-               //  selectedChoice = ko.observable()
-
+                 item_to_be_filtered = ko.observable('')
          }
+
+     ViewModel.item_to_be_filtered = "Uzma";
+
 
 
 
@@ -75,46 +77,17 @@
 
      }
 
-     function Filter(){
-        var input, filter, ul, li, a, i;
-        input = document.getElementById('myInput');
-        filter = input.value.toUpperCase();
-        ul = document.getElementById("ul");
-        li = ul.getElementsByTagName('li');
-
-         var typeli = li.valueOf();
-         console.log("typeli is" + typeof typeli);
-
-        // Loop through all list items, and hide those who don't match the search query
-        for (i = 0; i < li.length; i++) {
-
-
-            if (li[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
-                li[i].style.display = "";
-                console.log("I have displayed the li[i] element")
-                console.log("li[i].innerHTML is" + li[i].innerHTML)
-
-            } else {
-                li[i].style.display = "none";
-                console.log("I am going to set map marker as null")
-                markerList[i].setMap(null);
-            }
-
-        }
-
-     }
-
      function filterPlaces(){
          console.log("I am in filteredPlaces")
-           ViewModel.filteredItems = ko.computed(function() {
+           ViewModel.item_to_be_filtered = ko.computed(function() {
     var filter = document.getElementById('filter').value.toUpperCase();
                console.log("filter is" + filter)
     if (!filter) {
         console.log("placesArray in if statement is" + placesArray)
-        return this.placesArray;
+        return placesArray;
     } else {
         console.log("I am in else statement")
-        var filteredItems = ko.utils.arrayFilter(placesArray, function(place) {
+        var filteredItems = ko.utils.arrayFilter(this.placesArray, function(place) {
             console.log("I am in return function")
             var filtered_item = ko.utils.stringStartsWith(place.name().toLowerCase(), filter);
             console.log("filtered_item is" + filtered_item)

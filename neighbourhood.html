@@ -8,8 +8,9 @@
 <body>
     <script type = 'text/javascript' src="knockout/dist/knockout.js"></script>
 
-    <input type="text" id="filter" data-bind="textInput: item_to_be_filtered, event: {keypress: filterPlaces()}">
+    <input type="text" id="filter" data-bind="textInput: item_to_be_filtered">
 <p> You entered : <span data-bind="text: item_to_be_filtered"/></p>
+
 
     <ul id = "ul" class="collection" data-bind="foreach: placesArray">
                 <li id = "li" class="collection-item" data-bind="visible: true, text: name"></li>
@@ -43,15 +44,12 @@
      var markerList = []
 
      var ViewModel = function(){
-         placesArray = ko.observableArray(),
-                 item_to_be_filtered = ko.observable('')
+         placesArray = ko.observableArray();
+         item_to_be_filtered = ko.observable('');
+         ko.computed(function() {
+            console.log("I am in computed function" + item_to_be_filtered);
+         }, this);
          }
-
-     //item_to_be_filtered("Uzma");
-
-
-
-
 
      function initMap() {
          map_lat_lng = new google.maps.LatLng(-34.397, 150.644);
@@ -80,7 +78,7 @@
      }
 
      function filterPlaces(){
-         console.log("I am in filteredPlaces and value of item-to_be_filtered is" + ViewModel.item_to_be_filtered)
+         //console.log("I am in filteredPlaces and value of item-to_be_filtered is" + ViewModel.item_to_be_filtered)
           /* ViewModel.item_to_be_filtered = ko.computed(function() {
     var filter = document.getElementById('filter').value.toUpperCase();
                console.log("filter is" + filter)

@@ -39,6 +39,7 @@
      var service;
      var placesArray;
      var item_to_be_filtered;
+     var final_result;
      var marker;
      var returnedPlaces;
      var markerList = []
@@ -46,7 +47,7 @@
      var ViewModel = function(){
          placesArray = ko.observableArray();
          item_to_be_filtered = ko.observable('');
-         ko.computed(function() {
+         final_result = ko.computed(function() {
             console.log("I am in computed function" + item_to_be_filtered);
          }, this);
          }

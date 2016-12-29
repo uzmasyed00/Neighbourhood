@@ -11,12 +11,13 @@
     <input type="text" id="filter" data-bind="textInput: item_to_be_filtered">
 <p> You entered : <span data-bind="text: item_to_be_filtered"/></p>
 
+    <p> Value of final_result : <span data-bind="text: final_result"/></p>
 
-    <ul id = "ul" class="collection" data-bind="foreach: placesArray">
+     <p> Value of filtered_items is : <span data-bind="text: filtered_items"/></p>
+
+    <ul id = "ul" class="collection" data-bind="foreach: filtered_items">
                 <li id = "li" class="collection-item" data-bind="visible: true, text: name"></li>
         </ul>
-
-
 
     <form id="form-container" class="form-container">
         <label for="address">Address: </label><input id="address" type="textbox">
@@ -39,17 +40,56 @@
      var service;
      var placesArray;
      var item_to_be_filtered;
+     var filtered_items;
      var final_result;
      var marker;
-     var returnedPlaces;
+     var returned_places
      var markerList = []
 
      var ViewModel = function(){
          placesArray = ko.observableArray();
          item_to_be_filtered = ko.observable('');
          final_result = ko.computed(function() {
-            console.log("I am in computed function" + item_to_be_filtered);
+            //console.log("I am in computed function" + this.item_to_be_filtered());
+             return this.item_to_be_filtered();
          }, this);
+         returned_places = ko.observable('');
+
+         filtered_items = ko.computed(function() {
+          /*ko.utils.arrayFilter(this.placesArray(), function(place) {
+             return this.place;// Returns 'true' or 'false'
+          });*/
+             //return item_to_be_filtered();
+             /*
+             read filter value and display only that
+
+             */
+             //if the item_to_be_filtered is empty, then return placesArray
+             if(!this.item_to_be_filtered()) {
+            //return "uzma";
+                 return this.placesArray();
+             }
+
+             else{
+                 //return items matching filter
+                 /*for(var i=0; i<this.placesArray().length; i++){
+                     //console.log("place name in retured_places is" + this.placesArray()[i].name);
+                     //returned_places = ko.utils.stringStartsWith(this.placesArray()[i].name.toLowerCase(), this.item_to_be_filtered());
+
+                     console.log("I am in else statement of filtered_items" + this.returned_places());
+                 }*/
+
+                 ko.utils.arrayFilter(this.placesArray(), function(place) {
+                     if (place.indexOf(filter) > -1){
+                         return place;
+                     }
+          });
+
+
+
+             }
+         }, this);
+
          }
 
      function initMap() {
@@ -166,6 +206,7 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAMz-JMZ-DxEXfOS8_f1nenbjSSs9Nop_U&v=3&libraries=places&callback=initMap"
             async defer>
         </script>
+    <script>src="https://api.yelp.com/v2/search?term=food&location=San+Francisco"</script>
     <script>ko.applyBindings(ViewModel);</script>
 
 </body>

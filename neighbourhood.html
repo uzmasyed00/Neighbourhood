@@ -9,14 +9,9 @@
     <script type = 'text/javascript' src="knockout/dist/knockout.js"></script>
 
     <input type="text" id="filter" data-bind="textInput: item_to_be_filtered">
-<p> You entered : <span data-bind="text: item_to_be_filtered"/></p>
-
-    <p> Value of final_result : <span data-bind="text: final_result"/></p>
-
-     <p> Value of filtered_items is : <span data-bind="text: filtered_items"/></p>
 
     <ul id = "ul" class="collection" data-bind="foreach: filtered_items">
-                <li id = "li" class="collection-item" data-bind="visible: true, text: name"></li>
+                <li id ="li" class="collection-item" data-bind="visible: true, text: name"></li>
         </ul>
 
     <form id="form-container" class="form-container">
@@ -40,56 +35,81 @@
      var service;
      var placesArray;
      var item_to_be_filtered;
-     var filtered_items;
+     //var filtered_items;
      var final_result;
      var marker;
-     var returned_places
-     var markerList = []
+     var returned_places;
+     var markerList = [];
+     var viewModel;
+
+     var location_details;
+     var location_marker;
+
+     var locations = [
+          {title: 'Park Ave Penthouse', location: {lat: 40.7713024,  lng: -73.9632393}},
+          {title: 'Chelsea Loft', location: {lat: 40.7444883,  lng: -73.9949465}},
+          {title: 'Union Square Open Floor Plan', location: {lat: 40.7347062,  lng:  -73.9895759}},
+          {title: 'W 15th Street', location: {lat: 40.740395, lng: -74.002047}},
+          {title: '401-405 W 14th St', location: {lat: 40.741130, lng: -74.005748}}
+     ];
+
+     var location_info = function(location_details, location_marker){
+         var self = this;
+         this.location_details = location_details;
+         this.location_marker = location_marker;
+     }
 
      var ViewModel = function(){
+     	var self = this;
          placesArray = ko.observableArray();
-         item_to_be_filtered = ko.observable('');
-         final_result = ko.computed(function() {
-            //console.log("I am in computed function" + this.item_to_be_filtered());
-             return this.item_to_be_filtered();
-         }, this);
-         returned_places = ko.observable('');
+         this.item_to_be_filtered = ko.observable('');
+         this.filtered_items = ko.computed(function() {
+         	var filterItem = self.item_to_be_filtered().toLowerCase();
+         	console.log(filterItem);
+             //we just want to show markers for items that are returned in the result list
+             //return result  which is a list of matches returned
+         	return result_filtered = ko.utils.arrayFilter(placesArray(), function(place) {
+                //convert each location to lowercase
+         		var title = place.name.toLowerCase()
+                //store true if location matches filter
+         		var match = title.indexOf(filterItem) > -1;
+                if (!match){
 
-         filtered_items = ko.computed(function() {
-          /*ko.utils.arrayFilter(this.placesArray(), function(place) {
-             return this.place;// Returns 'true' or 'false'
-          });*/
-             //return item_to_be_filtered();
-             /*
-             read filter value and display only that
+                }
+         		console.log(title, filterItem, match);
 
-             */
-             //if the item_to_be_filtered is empty, then return placesArray
-             if(!this.item_to_be_filtered()) {
-            //return "uzma";
-                 return this.placesArray();
-             }
+                 /*console.log("filtered_items is" + result_filtered)
+                    //hide marker in placesArray
+                   // markerList[i].setMap(null);
+                    console.log("length of placesArray is" + placesArray.length);
+                    console.log("length of result_filtered is" + result_filtered.length);
 
-             else{
-                 //return items matching filter
-                 /*for(var i=0; i<this.placesArray().length; i++){
-                     //console.log("place name in retured_places is" + this.placesArray()[i].name);
-                     //returned_places = ko.utils.stringStartsWith(this.placesArray()[i].name.toLowerCase(), this.item_to_be_filtered());
+                    if(placesArray.length >= result_filtered.length ){
+                        console.log("I am in forloop")
+                        for(var i =0; i < placesArray.length; i++){
+                            for(var j =0; j < result_filtered.length; j++){
+                                if(placesArray[i] !=result_filtered[j]){
+                                    console.log("placesArray[i] is" + placesArray[i])
+                                    console.log("result_filtered[j] is" + result_filtered[j])
+                                    markerList[i].marker.setVisible(true);
+                                }
 
-                     console.log("I am in else statement of filtered_items" + this.returned_places());
-                 }*/
+                                else{
+                                    markerList[i].marker.setVisible(false);
+                                }
+                            }
+                        }
+            }*/
+                //return and store number of matches and their names in the list
+                return match; // Returns 'true' or 'false'
+          	});
 
-                 ko.utils.arrayFilter(this.placesArray(), function(place) {
-                     if (place.indexOf(filter) > -1){
-                         return place;
-                     }
-          });
+             console.log("result_filtered is" + result_filtered);
 
-
-
-             }
-         }, this);
-
+             /*for(var i=0; i<result_filtered.length; i++){
+                addMarker(result_filtered[i]);
+             }*/
+         });
          }
 
      function initMap() {
@@ -116,28 +136,11 @@
              });
          });
 
-     }
-
-     function filterPlaces(){
-         //console.log("I am in filteredPlaces and value of item-to_be_filtered is" + ViewModel.item_to_be_filtered)
-          /* ViewModel.item_to_be_filtered = ko.computed(function() {
-    var filter = document.getElementById('filter').value.toUpperCase();
-               console.log("filter is" + filter)
-    if (!filter) {
-        console.log("placesArray in if statement is" + placesArray)
-        return placesArray;
-    } else {
-        console.log("I am in else statement")
-        var filteredItems = ko.utils.arrayFilter(this.placesArray, function(place) {
-            console.log("I am in return function")
-            var filtered_item = ko.utils.stringStartsWith(place.name().toLowerCase(), filter);
-            console.log("filtered_item is" + filtered_item)
-        });
-        console.log("filteredItems is" + filteredItems)
-    }
-}, ViewModel);*/
+         viewModel = new ViewModel();
+         ko.applyBindings(viewModel);
 
      }
+
 
 
      function callback(results, status) {
@@ -150,11 +153,13 @@
 
 
          //markerList = [];
-         if (markerList.length >0){
+        /* if (markerList.length >0){
              for (var i=0; i<markerList.length; i++){
                  markerList[i].setMap(null);
              }
-         }
+         }*/
+
+
 
         for (var i = 0; i < results.length; i++) {
             var place = results[i];
@@ -163,6 +168,8 @@
             markerList.push(marker);
             }
         }
+
+           //create location_info object using results[i] object and markerList[i] object
 
     }
 
@@ -207,7 +214,7 @@
             async defer>
         </script>
     <script>src="https://api.yelp.com/v2/search?term=food&location=San+Francisco"</script>
-    <script>ko.applyBindings(ViewModel);</script>
+<!--     <script>ko.applyBindings(ViewModel);</script> -->
 
 </body>
 </html>

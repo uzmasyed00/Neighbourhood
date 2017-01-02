@@ -42,6 +42,7 @@ var YELP_TOKEN_SECRET = 'ej_V-eaYPaAfXblnM9OshO8erRE';
         // Do stuff with results
           console.log("I have received results successfully")
           console.log("result received is" + results.businesses[0].snippet_text);
+         // return results;
       },
       fail: function() {
         // Do stuff on fail

@@ -43,6 +43,8 @@
      var viewModel;
      var result_filtered;
      var filterItem;
+     var markerInfoToBeShown;
+     var address;
 
      var ViewModel = function(){
          placesArray = ko.observableArray();
@@ -67,11 +69,17 @@
 
              }, this);
 
+         markerInfoToBeShown =  ""
+         console.log("parameters location is" + parameters.location)
+         console.log("Changing parameters ...")
+         parameters.location = 'Dubai';
+
+
           //grab info about each item from script.js
 
-           //pass each "filtered" place name to yelp to gather review
+           //pass each  place name to yelp to gather review
            //store the review in a global variable
-          //pass the review to infoWondow
+          //pass the review to infoWindow
 
          }
 
@@ -84,7 +92,10 @@
          });
 
          document.getElementById('submit').addEventListener('click', function () {
-             var address = document.getElementById('address').value;
+             address = document.getElementById('address').value;
+             parameters.location = address;
+             console.log("Changed parameters location is" + parameters.location);
+
              copied_Address = address;
              geocodedAddress = geocodeAddress(address, geocoder, map, function (error, res) {
                  geocodedAddress = res
@@ -114,6 +125,11 @@
             addMarker(results[i]);
             markerList.push(marker);
             }
+
+         for (var i =0;i <results.length; i++){
+                     parameters.term = results;
+                     console.log("parameteres.term is" + results[i].name);
+                 }
         }
     }
 
@@ -124,8 +140,8 @@
          });
 
          var infowindow = new google.maps.InfoWindow({
-             content: place.name
-             //content:"uzma"
+            // content: place.name
+             content:markerInfoToBeShown
 
          });
 

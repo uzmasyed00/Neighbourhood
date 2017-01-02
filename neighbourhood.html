@@ -44,91 +44,37 @@
      var result_filtered;
      var filterItem;
 
-     var location_details;
-     var location_marker;
-     var location_info = function(location_details, location_marker){
-         var self = this;
-         this.location_details = location_details;
-         this.location_marker = location_marker;
-     }
-
      var ViewModel = function(){
-     	//var self = this;
          placesArray = ko.observableArray();
          item_to_be_filtered = ko.observable('');
           this.filtered_items = ko.computed(function() {
          	var filterItem = item_to_be_filtered().toLowerCase();
-         	//console.log(filterItem);
          	return result_filtered = ko.utils.arrayFilter(placesArray(), function(place) {
          		var title = place.name.toLowerCase()
          		var match = title.indexOf(filterItem) > -1;
-                if (!match){
-
-                }
-         		//console.log(title, filterItem, match);
-                console.log("result_filtered inside of result_filtered arrayFilter is" + result_filtered);
-                /*
-                working example of hiding all markers
-                for (var i=0; i<markerList.length; i++) {
-                    console.log("I am going to disable all markers")
-                    markerList[i].setVisible(false);
-                }*/
-                console.log("returnedPlaces inside arrayFilters is" + returnedPlaces);
-                console.log("placesarray() inside arrayfilters is" + placesArray());
                 for (var i = 0; i < placesArray().length; i++) {
                  for (var j = 0; j < result_filtered.length; j++) {
                      if (placesArray()[i] != result_filtered[j]) {
-                         console.log("placesArray()[i] is" + placesArray()[i].name)
-                         console.log("result_filtered[j] is" + result_filtered[j].name)
                          markerList[i].setVisible(false);
                      }
-
                      else {
                          markerList[i].setVisible(true);
                      }
                  }
              }
-                return match; // Returns 'true' or 'false'
+                return match;
           	});
 
-              //console.log("I have finished executing the ko.utils.arrayFilter function")
-             console.log("result_filtered outside of arrayFilter function (not printing) is" + result_filtered);
-
-                //hide the markers
-             /*for (var i=0; i<markerList.length; i++){
-                 console.log("I am going to disable markers")
-                 markerList[i].setVisible(false);
-             }*/
              }, this);
 
-         //console.log("I have finished every duty in viewModel function")
-         //console.log("result_filtered is" + result_filtered);
+          //grab info about each item from script.js
 
-        // ShowFilteredMarkers()
+           //pass each "filtered" place name to yelp to gather review
+           //store the review in a global variable
+          //pass the review to infoWondow
+
          }
 
-
-     function ShowFilteredMarkers() {
-         console.log("returnedPlaces inside ShowFilteredMarkers is" + returnedPlaces);
-         //console.log("filtered items in viewModel is" + filtered_items());
-
-         if (placesArray.length >= result_filtered.length) {
-             console.log("I am in forloop")
-             for (var i = 0; i < placesArray.length; i++) {
-                 for (var j = 0; j < result_filtered.length; j++) {
-                     if (placesArray[i] != result_filtered[j]) {
-                         console.log("placesArray[i] is" + placesArray[i])
-                         console.log("result_filtered[j] is" + result_filtered[j])
-                         markerList[i].marker.setVisible(true);
-                     }
-
-                     else {
-                         markerList[i].marker.setVisible(false);
-                     }
-                 }
-             }
-         }
-     }
      function initMap() {
          map_lat_lng = new google.maps.LatLng(-34.397, 150.644);
          geocoder = new google.maps.Geocoder();
@@ -159,18 +105,12 @@
 
      }
 
-
-
      function callback(results, status) {
      if (status == google.maps.places.PlacesServiceStatus.OK) {
-         console.log(results[0])
          placesArray(results);
-
          returnedPlaces =  results;
-         console.log("returnedPlaces inside the callback is" + returnedPlaces)
         for (var i = 0; i < results.length; i++) {
             var place = results[i];
-            console.log("place is" + place);
             addMarker(results[i]);
             markerList.push(marker);
             }
@@ -185,6 +125,7 @@
 
          var infowindow = new google.maps.InfoWindow({
              content: place.name
+             //content:"uzma"
 
          });
 
@@ -214,9 +155,12 @@
 
    </script>
     <script src="js/libs/jquery.min.js"></script>
+    <script src="js/libs/oauth-signature.js"></script>
+    <script src="js/libs/oauth-signature.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAMz-JMZ-DxEXfOS8_f1nenbjSSs9Nop_U&v=3&libraries=places&callback=initMap"
             async defer>
         </script>
+    <script src="js/script.js"></script>
     <script>src="https://api.yelp.com/v2/search?term=food&location=San+Francisco"</script>
 
 </body>

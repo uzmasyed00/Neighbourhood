@@ -11,7 +11,7 @@
     <input type="text" id="filter" data-bind="textInput: item_to_be_filtered">
 
     <ul id = "ul" class="collection" data-bind="foreach: filtered_items">
-                <li id ="li" class="collection-item" data-bind="visible: true, text: name"></li>
+                <li id ="li" class="collection-item" data-bind="visible: true, text: name, click: $root.showPlaceInfo"></li>
         </ul>
 
     <form id="form-container" class="form-container">
@@ -44,6 +44,7 @@
      var result_filtered;
      var filterItem;
      var markerInfoToBeShown;
+     var markerInfoWindow;
      var address;
 
      var ViewModel = function(){
@@ -69,18 +70,18 @@
 
              }, this);
 
-         markerInfoToBeShown =  ""
-         console.log("parameters location is" + parameters.location)
-         console.log("Changing parameters ...")
-         parameters.location = 'Dubai';
+         //markerInfoToBeShown =  ""
+         this.showPlaceInfo = function(place) {
+            console.log(place);
+             console.log("address in click handler is" + address);
+            getYelpReviews(place, address);
 
-
-          //grab info about each item from script.js
-
-           //pass each  place name to yelp to gather review
-           //store the review in a global variable
-          //pass the review to infoWindow
-
+             for (var i=0; i<placesArray().length; i++){
+                 if(placesArray()[i].name == place.name){
+                     markerInfoWindow.open(map, markerList[i]);
+                 }
+             }
+         };
          }
 
      function initMap() {
@@ -93,8 +94,7 @@
 
          document.getElementById('submit').addEventListener('click', function () {
              address = document.getElementById('address').value;
-             parameters.location = address;
-             console.log("Changed parameters location is" + parameters.location);
+             console.log("Changed parameters location is" + address);
 
              copied_Address = address;
              geocodedAddress = geocodeAddress(address, geocoder, map, function (error, res) {
@@ -109,29 +109,32 @@
 
              });
          });
+         //createInfoWindow();
 
          viewModel = new ViewModel();
          ko.applyBindings(viewModel);
 
-
      }
 
-     function callback(results, status) {
-     if (status == google.maps.places.PlacesServiceStatus.OK) {
-         placesArray(results);
-         returnedPlaces =  results;
-        for (var i = 0; i < results.length; i++) {
-            var place = results[i];
-            addMarker(results[i]);
-            markerList.push(marker);
-            }
+    /* function createInfoWindow(content){
+         console.log("Content is" + content);
+          markerInfoWindow = new google.maps.InfoWindow({
+             content:content
+         });
+     }*/
 
-         for (var i =0;i <results.length; i++){
-                     parameters.term = results;
-                     console.log("parameteres.term is" + results[i].name);
-                 }
-        }
+     function callback(results, status) {
+         if (status == google.maps.places.PlacesServiceStatus.OK) {
+             placesArray(results);
+             returnedPlaces = results;
+             for (var i = 0; i < results.length; i++) {
+                 //var place = results[i];
+                 addMarker(results[i]);
+                // createInfoWindow(results[i].name)
+                 markerList.push(marker);
+             }
     }
+         }
 
      function addMarker(place) {
          marker = new google.maps.Marker({
@@ -139,35 +142,32 @@
              position: place.geometry.location
          });
 
-         var infowindow = new google.maps.InfoWindow({
-            // content: place.name
-             content:markerInfoToBeShown
-
+          markerInfoWindow = new google.maps.InfoWindow({
+             content:place.name
          });
 
          marker.addListener('click', function() {
-             infowindow.open(map, marker);
+             markerInfoWindow.open(map, marker);
          });
      }
 
      function geocodeAddress(address, geocoder, resultsMap, callback) {
-        geocoder.geocode({'address': address}, function(results, status) {
-            var latlng
-          if (status === 'OK') {
-              latlng = results[0].geometry.location
-              resultsMap.setCenter(latlng);
-              var marker = new google.maps.Marker({
-              map: resultsMap,
-              position: latlng
-              });
-              callback(null, latlng)
-          }
-
-          else {
-            alert('Geocode was not successful for the following reason: ' + status);
-          }
-        });
-      }
+         geocoder.geocode({'address': address}, function (results, status) {
+             var latlng
+             if (status === 'OK') {
+                 latlng = results[0].geometry.location
+                 resultsMap.setCenter(latlng);
+                 var marker = new google.maps.Marker({
+                     map: resultsMap,
+                     position: latlng
+                 });
+                 callback(null, latlng)
+             }
+             else {
+                 alert('Geocode was not successful for the following reason: ' + status);
+             }
+         });
+     }
 
    </script>
     <script src="js/libs/jquery.min.js"></script>

@@ -70,7 +70,6 @@
 
              }, this);
 
-         //markerInfoToBeShown =  ""
          this.showPlaceInfo = function(place) {
             console.log(place);
              console.log("address in click handler is" + address);
@@ -78,11 +77,11 @@
 
              for (var i=0; i<placesArray().length; i++){
                  if(placesArray()[i].name == place.name){
-                     markerInfoWindow.open(map, markerList[i]);
+                     showInfo(markerList[i], place.name);
                  }
              }
          };
-         }
+     }
 
      function initMap() {
          map_lat_lng = new google.maps.LatLng(-34.397, 150.644);
@@ -109,45 +108,47 @@
 
              });
          });
-         //createInfoWindow();
 
-         viewModel = new ViewModel();
-         ko.applyBindings(viewModel);
+
+         for (var i = 0; i < markerList.length; i++) {
+             markerList[i].addListener('click', function () {
+                 showInfo(markerList[i], place.name)
+             });
+         }
+             viewModel = new ViewModel();
+             ko.applyBindings(viewModel);
+
 
      }
 
-    /* function createInfoWindow(content){
+     function showInfo(marker, content){
          console.log("Content is" + content);
-          markerInfoWindow = new google.maps.InfoWindow({
+          var InfoWindow = new google.maps.InfoWindow({
              content:content
          });
-     }*/
+
+           InfoWindow.open(map, marker);
+
+     }
 
      function callback(results, status) {
          if (status == google.maps.places.PlacesServiceStatus.OK) {
              placesArray(results);
              returnedPlaces = results;
              for (var i = 0; i < results.length; i++) {
-                 //var place = results[i];
                  addMarker(results[i]);
-                // createInfoWindow(results[i].name)
-                 markerList.push(marker);
              }
     }
          }
 
      function addMarker(place) {
-         marker = new google.maps.Marker({
+         var marker = new google.maps.Marker({
              map: map,
              position: place.geometry.location
          });
-
-          markerInfoWindow = new google.maps.InfoWindow({
-             content:place.name
-         });
-
+         markerList.push(marker);
          marker.addListener('click', function() {
-             markerInfoWindow.open(map, marker);
+             showInfo(marker, place.name)
          });
      }
 

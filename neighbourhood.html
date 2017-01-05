@@ -37,7 +37,7 @@
      var item_to_be_filtered;
      var filtered_items;
      var final_result;
-     var marker;
+     //var marker;
      var returnedPlaces;
      var markerList = [];
      var viewModel;
@@ -109,16 +109,21 @@
              });
          });
 
-
-         for (var i = 0; i < markerList.length; i++) {
-             markerList[i].addListener('click', function () {
-                 showInfo(markerList[i], place.name)
-             });
-         }
              viewModel = new ViewModel();
              ko.applyBindings(viewModel);
 
 
+     }
+
+     function determineContentForMarker(marker){
+         //given a marker item, determine the appropriate content for the marker
+         for (var i =0; i<markerList.length; i++){
+             if (marker == markerList[i]){
+                 console.log("I have found the i value of marker in markerList. The value is" + i);
+                 console.log("name of place at this value of i is" + returnedPlaces[i].name);
+                 return returnedPlaces[i].name
+             }
+         }
      }
 
      function showInfo(marker, content){
@@ -138,6 +143,17 @@
              for (var i = 0; i < results.length; i++) {
                  addMarker(results[i]);
              }
+
+             markerList.forEach(function(marker){
+                 //console.log("I am in forEach function for markerList")
+                 //console.log("The value of marker is" + marker);
+                 marker.addListener('click', function () {
+                     var markerContent = determineContentForMarker(marker);
+                     console.log("markerContent is" + markerContent);
+                     showInfo(marker, markerContent);
+                 });
+
+             });
     }
          }
 
@@ -147,9 +163,9 @@
              position: place.geometry.location
          });
          markerList.push(marker);
-         marker.addListener('click', function() {
+        /* marker.addListener('click', function() {
              showInfo(marker, place.name)
-         });
+         });*/
      }
 
      function geocodeAddress(address, geocoder, resultsMap, callback) {

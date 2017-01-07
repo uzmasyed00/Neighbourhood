@@ -73,13 +73,26 @@
          this.showPlaceInfo = function(place) {
             console.log(place);
              console.log("address in click handler is" + address);
-            getYelpReviews(place, address);
+            //getYelpReviews(place, address);
+             var yelpReviews = getYelpReviews(place, address).done(function(result){
+
+                console.log("result obtained from done function of ajax request is" + result.businesses[0].snippet_text);
 
              for (var i=0; i<placesArray().length; i++){
                  if(placesArray()[i].name == place.name){
+                     showInfo(markerList[i], place.name + result.businesses[0].snippet_text);
+                 }
+                }
+
+             });
+
+             console.log("yelpReviews is" + yelpReviews);
+
+             /*for (var i=0; i<placesArray().length; i++){
+                 if(placesArray()[i].name == place.name){
                      showInfo(markerList[i], place.name);
                  }
-             }
+             }*/
          };
      }
 

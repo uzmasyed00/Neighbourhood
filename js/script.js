@@ -7,8 +7,9 @@ function nonce_generate() {
 }
 
 
-function getYelpReviews(place, city) {
-  var location = place.name;
+function getYelpReviewsFromYelp(place, city) {
+  console.log("place received in this function is" + place.name);
+  console.log("city received in this function is" + city);
   var yelp_url = 'https://api.yelp.com/v2/search?'
   var YELP_KEY_SECRET = 'rML1MhFwm6phKTKPrwpSbnZ8fss';
   var YELP_TOKEN_SECRET = 'ej_V-eaYPaAfXblnM9OshO8erRE';
@@ -22,6 +23,7 @@ function getYelpReviews(place, city) {
     oauth_version: '1.0',
     callback: 'cb',
     term: place.name,
+    //term: 'Medina',
     location: city
   };
 
@@ -36,7 +38,7 @@ function getYelpReviews(place, city) {
     dataType: 'jsonp',
     success: function(results) {
 
-      console.log("results in success function is" + results)
+      console.log(results)
       //console.log("snippet_text in results in success function is" +results.businesses[0].snippet_text);
 
     },
@@ -44,7 +46,7 @@ function getYelpReviews(place, city) {
       alert("Problem occurred");
     }
   };
-
+//$.ajax(settings);
   var resultFromAjaxRequest = $.ajax(settings);
   return resultFromAjaxRequest;
 }

@@ -7,8 +7,10 @@
 </head>
 <body>
     <script type = 'text/javascript' src="knockout/dist/knockout.js"></script>
-
-    <input type="text" id="filter" value = "Filter Place" data-bind="textInput: item_to_be_filtered">
+    </br>
+    <div id = "location"></div>
+    </br>
+    <input type="text" id="filter" placeholder= "Filter Place" data-bind="textInput: item_to_be_filtered">
 
     <ul id = "ul" class="collection" data-bind="foreach: filtered_items">
                 <li id ="li" class="collection-item" data-bind="visible: true, text: name, click: $root.showPlaceInfo"></li>
@@ -41,12 +43,8 @@
      var markerInfoWindow;
      var address;
      var yelp_review_for_business;
-     var locations;
 
      var ViewModel = function(){
-         locations= [{},{}
-
-         ]
          placesArray = ko.observableArray();
          item_to_be_filtered = ko.observable('');
           this.filtered_items = ko.computed(function() {
@@ -123,6 +121,9 @@
 
 
      function initMap() {
+         address = 'Kistsilano';
+        $("#location").append("Lodgings in" + " " + address);
+        // var candidateSkills =  $(#location).replace("%data%", appendedSkills);
          map_lat_lng = new google.maps.LatLng(-34.397, 150.644);
          geocoder = new google.maps.Geocoder();
          map = new google.maps.Map(document.getElementById('map'), {
@@ -130,7 +131,8 @@
              zoom: 8
          });
 
-             address = 'kitsilano'
+             //address = 'kitsilano'
+
              console.log("Changed parameters location is" + address);
 
              copied_Address = address;
@@ -182,6 +184,8 @@
 
 
                  marker.addListener('click', function () {
+                     marker.setIcon('https://www.google.com/mapfiles/marker_green.png');
+                     toggleBounce(marker);
                      var markerLocation = determinePlaceForMarker(marker);
                      console.log("markerLocation is" + markerLocation);
                      getYelpReviewsAndPopulateInfo(markerLocation);
@@ -194,10 +198,19 @@
      function addMarker(place) {
          var marker = new google.maps.Marker({
              map: map,
+             animation: google.maps.Animation.DROP,
              position: place.geometry.location
          });
          markerList.push(marker);
      }
+
+      function toggleBounce(marker) {
+        if (marker.getAnimation() !== null) {
+          marker.setAnimation(null);
+        } else {
+          marker.setAnimation(google.maps.Animation.BOUNCE);
+        }
+      }
 
      function geocodeAddress(address, geocoder, resultsMap, callback) {
          geocoder.geocode({'address': address}, function (results, status) {

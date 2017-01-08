@@ -52,6 +52,10 @@ html, body {background-color: #CCC;
     height: 100%;
 }
 
+#filter{
+    margin-left: 25px;
+}
+
 #placesReturned{
     width: 10%;
 }

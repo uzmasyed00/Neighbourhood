@@ -1,243 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Your Moving Companion</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-    <script type = 'text/javascript' src="knockout/dist/knockout.js"></script>
-    </br>
-    <div id = "location"></div>
-    </br>
-    <input type="text" id="filter" placeholder= "Filter Place" data-bind="textInput: item_to_be_filtered">
 
-    <ul id = "ul" class="collection" data-bind="foreach: filtered_items">
-                <li id ="li" class="collection-item" data-bind="visible: true, text: name, click: $root.showPlaceInfo"></li>
-        </ul>
+<body>
+    <script type='text/javascript' src="knockout/dist/knockout.js"></script>
+    </br>
+    <div id="location"></div>
+    </br>
+    <input type="text" id="filter" placeholder="Filter Place" data-bind="textInput: item_to_be_filtered">
+
+    <ul id="ul" class="collection" data-bind="foreach: filtered_items">
+        <li id="li" class="collection-item" data-bind="visible: true, text: name, click: $root.showPlaceInfo"></li>
+    </ul>
 
     <hr>
 
-    <div id = "map">
+    <div id="map">
     </div>
 
 
-     <script>
-     var map;
-     var address;
-     var copied_Address;
-     var geocodedAddress;
-     var geocoder;
-     var map_lat_lng;
-     var service;
-     var placesArray;
-     var item_to_be_filtered;
-     var filtered_items;
-     var final_result;
-     var returnedPlaces;
-     var markerList = [];
-     var viewModel;
-     var result_filtered;
-     var filterItem;
-     var markerInfoToBeShown;
-     var markerInfoWindow;
-     var address;
-     var yelp_review_for_business;
+    <script>
+        var map;
+        var address;
+        var copied_Address;
+        var geocodedAddress;
+        var geocoder;
+        var map_lat_lng;
+        var service;
+        var placesArray;
+        var item_to_be_filtered;
+        var filtered_items;
+        var final_result;
+        var returnedPlaces;
+        var markerList = [];
+        var viewModel;
+        var result_filtered;
+        var filterItem;
+        var markerInfoToBeShown;
+        var markerInfoWindow;
+        var address;
+        var yelp_review_for_business;
 
-     var ViewModel = function(){
-         placesArray = ko.observableArray();
-         item_to_be_filtered = ko.observable('');
-          this.filtered_items = ko.computed(function() {
-         	var filterItem = item_to_be_filtered().toLowerCase();
-         	return result_filtered = ko.utils.arrayFilter(placesArray(), function(place) {
-         		var title = place.name.toLowerCase()
-         		var match = title.indexOf(filterItem) > -1;
-                for (var i = 0; i < placesArray().length; i++) {
-                 for (var j = 0; j < result_filtered.length; j++) {
-                     if (placesArray()[i] != result_filtered[j]) {
-                         markerList[i].setVisible(false);
-                     }
-                     else {
-                         markerList[i].setVisible(true);
-                     }
-                 }
-             }
-                return match;
-          	});
+        var ViewModel = function() {
+            placesArray = ko.observableArray();
+            item_to_be_filtered = ko.observable('');
+            this.filtered_items = ko.computed(function() {
+                var filterItem = item_to_be_filtered().toLowerCase();
+                return result_filtered = ko.utils.arrayFilter(placesArray(), function(place) {
+                    var title = place.name.toLowerCase()
+                    var match = title.indexOf(filterItem) > -1;
+                    for (var i = 0; i < placesArray().length; i++) {
+                        for (var j = 0; j < result_filtered.length; j++) {
+                            if (placesArray()[i] != result_filtered[j]) {
+                                markerList[i].setVisible(false);
+                            } else {
+                                markerList[i].setVisible(true);
+                            }
+                        }
+                    }
+                    return match;
+                });
 
-             }, this);
+            }, this);
 
-         this.showPlaceInfo = function(place) {
-             getYelpReviewsAndPopulateInfo(place, address)
-         };
-     }
+            this.showPlaceInfo = function(place) {
+                getYelpReviewsAndPopulateInfo(place, address)
+            };
+        }
 
-     function getYelpReviewsAndPopulateInfo(place){
-         var business_review = "";
-
-         console.log("place name received in this function in neighbourhood.html is" + place);
-         getYelpReviewsFromYelp(place, address).done(function(result){
-              var businesses_for_place = result.businesses;
+        function getYelpReviewsAndPopulateInfo(place) {
+            var business_review = "";
+            getYelpReviewsFromYelp(place, address).done(function(result) {
+                var businesses_for_place = result.businesses;
 
 
-                 console.log("yelp_business_reviews is" + businesses_for_place);
+                businesses_for_place.forEach(function(business) {
 
-                 //console.log("type of yelp_business_reviews is" + typeof businesses_for_place);
+                    if (business.name == place.name) {
+                        business_review = business.snippet_text;
+                    }
 
-                 businesses_for_place.forEach(function(business){
-                     console.log("I am in forEach loop for yelp_business_reviews");
-                     console.log("business name is" + business.name);
-                     //console.log("place name is" + place.name);
-                     //console.log("type of business name is" + typeof business.name);
-                     if (business.name == place.name){
-                     //if(business.name.indexOf(place.name) !== -1){
-                      //if(business.name.startsWith(place.name)){
-                          console.log("I have found that the stringStartsWith");
-                         console.log("I have found the correct business");
-                         business_review =  business.snippet_text;
-                         console.log("business_review is" + business_review);
-                     }
+                });
 
-                 });
-
-
-                          //find the first business returned from yelp and populate the review for that
-              if(business_review == ""){
-                  console.log("I could not find any matching business so I am going to print the first one")
-                  business_review = businesses_for_place[0].snippet_text;
-              }
-
-
-
-             for (var i=0; i<placesArray().length; i++){
-                 if(placesArray()[i].name == place.name){
-                     showInfo(markerList[i], place.name + ' - ' + business_review);
-                 }
+                if (business_review == "") {
+                    business_review = businesses_for_place[0].snippet_text;
                 }
 
-             });
+                for (var i = 0; i < placesArray().length; i++) {
+                    if (placesArray()[i].name == place.name) {
+                        showInfo(markerList[i], place.name + ' - ' + business_review);
+                    }
+                }
 
-     }
+            });
 
-
-     function initMap() {
-         address = 'Kistsilano';
-        $("#location").append("Lodgings in" + " " + address);
-        // var candidateSkills =  $(#location).replace("%data%", appendedSkills);
-         map_lat_lng = new google.maps.LatLng(-34.397, 150.644);
-         geocoder = new google.maps.Geocoder();
-         map = new google.maps.Map(document.getElementById('map'), {
-             center: map_lat_lng,
-             zoom: 8
-         });
-
-             //address = 'kitsilano'
-
-             console.log("Changed parameters location is" + address);
-
-             copied_Address = address;
-             geocodedAddress = geocodeAddress(address, geocoder, map, function (error, res) {
-                 geocodedAddress = res
-                 var request = {
-                     location: res,
-                     radius: '50000',
-                     types: ['food']
-                 };
-                 service = new google.maps.places.PlacesService(map);
-                 service.nearbySearch(request, callback)
-
-         });
-
-             viewModel = new ViewModel();
-             ko.applyBindings(viewModel);
-     }
-
-     function determinePlaceForMarker(marker){
-         //given a marker item, determine the appropriate content for the marker
-         for (var i =0; i<markerList.length; i++){
-             if (marker == markerList[i]){
-                 console.log("I have found the i value of marker in markerList. The value is" + i);
-                 console.log("name of place at this value of i is" + returnedPlaces[i].name);
-                 return returnedPlaces[i]
-             }
-         }
-     }
-
-     function showInfo(marker, content){
-         console.log("Content is" + content);
-          var InfoWindow = new google.maps.InfoWindow({
-             content:content
-         });
-           InfoWindow.open(map, marker);
-
-     }
-
-     function callback(results, status) {
-         if (status == google.maps.places.PlacesServiceStatus.OK) {
-             placesArray(results);
-             returnedPlaces = results;
-             for (var i = 0; i < results.length; i++) {
-                 addMarker(results[i]);
-             }
-
-             markerList.forEach(function(marker){
-
-
-                 marker.addListener('click', function () {
-                     marker.setIcon('https://www.google.com/mapfiles/marker_green.png');
-                     toggleBounce(marker);
-                     var markerLocation = determinePlaceForMarker(marker);
-                     console.log("markerLocation is" + markerLocation);
-                     getYelpReviewsAndPopulateInfo(markerLocation);
-                 });
-
-             });
         }
-     }
 
-     function addMarker(place) {
-         var marker = new google.maps.Marker({
-             map: map,
-             animation: google.maps.Animation.DROP,
-             position: place.geometry.location
-         });
-         markerList.push(marker);
-     }
 
-      function toggleBounce(marker) {
-        if (marker.getAnimation() !== null) {
-          marker.setAnimation(null);
-        } else {
-          marker.setAnimation(google.maps.Animation.BOUNCE);
+        function initMap() {
+            address = 'Kistsilano';
+            $("#location").append("Lodgings in" + " " + address);
+            map_lat_lng = new google.maps.LatLng(-34.397, 150.644);
+            geocoder = new google.maps.Geocoder();
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: map_lat_lng,
+                zoom: 8
+            });
+
+            copied_Address = address;
+            geocodedAddress = geocodeAddress(address, geocoder, map, function(error, res) {
+                geocodedAddress = res
+                var request = {
+                    location: res,
+                    radius: '50000',
+                    types: ['food']
+                };
+                service = new google.maps.places.PlacesService(map);
+                service.nearbySearch(request, callback)
+
+            });
+
+            viewModel = new ViewModel();
+            ko.applyBindings(viewModel);
         }
-      }
 
-     function geocodeAddress(address, geocoder, resultsMap, callback) {
-         geocoder.geocode({'address': address}, function (results, status) {
-             var latlng
-             if (status === 'OK') {
-                 latlng = results[0].geometry.location
-                 resultsMap.setCenter(latlng);
-                 var marker = new google.maps.Marker({
-                     map: resultsMap,
-                     position: latlng
-                 });
-                 callback(null, latlng)
-             }
-             else {
-                 alert('Geocode was not successful for the following reason: ' + status);
-             }
-         });
-     }
+        function determinePlaceForMarker(marker) {
+            for (var i = 0; i < markerList.length; i++) {
+                if (marker == markerList[i]) {
+                    return returnedPlaces[i]
+                }
+            }
+        }
 
-   </script>
+        function showInfo(marker, content) {
+            var InfoWindow = new google.maps.InfoWindow({
+                content: content
+            });
+            InfoWindow.open(map, marker);
+
+        }
+
+        function callback(results, status) {
+            if (status == google.maps.places.PlacesServiceStatus.OK) {
+                placesArray(results);
+                returnedPlaces = results;
+                for (var i = 0; i < results.length; i++) {
+                    addMarker(results[i]);
+                }
+
+                markerList.forEach(function(marker) {
+
+
+                    marker.addListener('click', function() {
+                        marker.setIcon('https://www.google.com/mapfiles/marker_green.png');
+                        toggleBounce(marker);
+                        var markerLocation = determinePlaceForMarker(marker);
+                        getYelpReviewsAndPopulateInfo(markerLocation);
+                    });
+
+                });
+            }
+        }
+
+        function addMarker(place) {
+            var marker = new google.maps.Marker({
+                map: map,
+                animation: google.maps.Animation.DROP,
+                position: place.geometry.location
+            });
+            markerList.push(marker);
+        }
+
+        function toggleBounce(marker) {
+            if (marker.getAnimation() !== null) {
+                marker.setAnimation(null);
+            } else {
+                marker.setAnimation(google.maps.Animation.BOUNCE);
+            }
+        }
+
+        function geocodeAddress(address, geocoder, resultsMap, callback) {
+            geocoder.geocode({
+                'address': address
+            }, function(results, status) {
+                var latlng
+                if (status === 'OK') {
+                    latlng = results[0].geometry.location
+                    resultsMap.setCenter(latlng);
+                    var marker = new google.maps.Marker({
+                        map: resultsMap,
+                        position: latlng
+                    });
+                    callback(null, latlng)
+                } else {
+                    alert('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        }
+    </script>
     <script src="js/libs/jquery.min.js"></script>
     <script src="js/libs/oauth-signature.js"></script>
     <script src="js/libs/oauth-signature.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAMz-JMZ-DxEXfOS8_f1nenbjSSs9Nop_U&v=3&libraries=places&callback=initMap"
-            async defer>
-        </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAMz-JMZ-DxEXfOS8_f1nenbjSSs9Nop_U&v=3&libraries=places&callback=initMap" async defer>
+    </script>
     <script src="js/script.js"></script>
 
 </body>
+
 </html>

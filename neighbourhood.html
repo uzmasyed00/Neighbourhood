@@ -8,7 +8,7 @@
 <body>
     <script type = 'text/javascript' src="knockout/dist/knockout.js"></script>
 
-    <input type="text" id="filter" data-bind="textInput: item_to_be_filtered">
+    <input type="text" id="filter" value = "Filter Place" data-bind="textInput: item_to_be_filtered">
 
     <ul id = "ul" class="collection" data-bind="foreach: filtered_items">
                 <li id ="li" class="collection-item" data-bind="visible: true, text: name, click: $root.showPlaceInfo"></li>
@@ -41,8 +41,12 @@
      var markerInfoWindow;
      var address;
      var yelp_review_for_business;
+     var locations;
 
      var ViewModel = function(){
+         locations= [{},{}
+
+         ]
          placesArray = ko.observableArray();
          item_to_be_filtered = ko.observable('');
           this.filtered_items = ko.computed(function() {
@@ -71,7 +75,7 @@
      }
 
      function getYelpReviewsAndPopulateInfo(place){
-         var business_review;
+         var business_review = "";
 
          console.log("place name received in this function in neighbourhood.html is" + place);
          getYelpReviewsFromYelp(place, address).done(function(result){
@@ -80,23 +84,36 @@
 
                  console.log("yelp_business_reviews is" + businesses_for_place);
 
-                 console.log("type of yelp_business_reviews is" + typeof businesses_for_place);
+                 //console.log("type of yelp_business_reviews is" + typeof businesses_for_place);
 
                  businesses_for_place.forEach(function(business){
                      console.log("I am in forEach loop for yelp_business_reviews");
                      console.log("business name is" + business.name);
-                     console.log("place name is" + place.name);
-                     //if (business.name == place.name){
-                     if(business.name.indexOf(place.name) !== -1){
+                     //console.log("place name is" + place.name);
+                     //console.log("type of business name is" + typeof business.name);
+                     if (business.name == place.name){
+                     //if(business.name.indexOf(place.name) !== -1){
+                      //if(business.name.startsWith(place.name)){
+                          console.log("I have found that the stringStartsWith");
                          console.log("I have found the correct business");
                          business_review =  business.snippet_text;
                          console.log("business_review is" + business_review);
                      }
+
                  });
+
+
+                          //find the first business returned from yelp and populate the review for that
+              if(business_review == ""){
+                  console.log("I could not find any matching business so I am going to print the first one")
+                  business_review = businesses_for_place[0].snippet_text;
+              }
+
+
 
              for (var i=0; i<placesArray().length; i++){
                  if(placesArray()[i].name == place.name){
-                     showInfo(markerList[i], place.name + business_review);
+                     showInfo(markerList[i], place.name + ' - ' + business_review);
                  }
                 }
 
@@ -112,24 +129,6 @@
              center: map_lat_lng,
              zoom: 8
          });
-
-         /*document.getElementById('submit').addEventListener('click', function () {
-             address = document.getElementById('address').value;
-             console.log("Changed parameters location is" + address);
-
-             copied_Address = address;
-             geocodedAddress = geocodeAddress(address, geocoder, map, function (error, res) {
-                 geocodedAddress = res
-                 var request = {
-                     location: res,
-                     radius: '50000',
-                     types: ['food']
-                 };
-                 service = new google.maps.places.PlacesService(map);
-                 service.nearbySearch(request, callback)
-
-             });
-         });*/
 
              address = 'kitsilano'
              console.log("Changed parameters location is" + address);
